@@ -50,7 +50,7 @@
                                                     <color key="textColor" red="0.49803921579999999" green="0.49803921579999999" blue="0.49803921579999999" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="88 Division St, Mission Bay" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="s2B-OB-za8">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="88 Division St, Mission Bay" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="s2B-OB-za8">
                                                     <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -87,6 +87,7 @@
                                                 <constraint firstItem="Xvg-Th-2YG" firstAttribute="leading" secondItem="7Wh-At-agv" secondAttribute="leading" constant="8" id="Uag-Vg-GX1"/>
                                                 <constraint firstItem="wN2-DS-1n2" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="X89-Xt-d4t" secondAttribute="trailing" constant="8" id="X7L-OT-Agk"/>
                                                 <constraint firstAttribute="trailing" secondItem="wN2-DS-1n2" secondAttribute="trailing" constant="8" id="XTt-3N-ibk"/>
+                                                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="s2B-OB-za8" secondAttribute="trailing" constant="8" id="ZH6-we-OMq"/>
                                                 <constraint firstAttribute="trailing" secondItem="CKV-0E-ea4" secondAttribute="trailing" constant="8" id="aGg-Tn-Rl5"/>
                                                 <constraint firstItem="s2B-OB-za8" firstAttribute="leading" secondItem="Xvg-Th-2YG" secondAttribute="trailing" constant="8" id="bxh-Xv-SXP"/>
                                                 <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="Xvg-Th-2YG" secondAttribute="bottom" constant="8" id="ec3-rv-q1a"/>
