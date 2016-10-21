@@ -8,14 +8,20 @@
 
 import UIKit
 
-class FiltersViewController: UIViewController {
+class FiltersViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, SwitchCellDelegate {
 
     @IBOutlet weak var tableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        // Set UITableView data source and delegate
+        tableView.dataSource = self;
+        tableView.delegate = self;
+        
+        // Auto size cells
+//        tableView.estimatedRowHeight = 150.0
+//        tableView.rowHeight = UITableViewAutomaticDimension
     }
 
     override func didReceiveMemoryWarning() {
@@ -31,7 +37,30 @@ class FiltersViewController: UIViewController {
         dismiss(animated: true, completion: nil)
     }
     
-    let categories: [Dictionary<String, String>] =
+    // MARK: - UITableViewDataSource
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return categories.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "SwitchCell", for: indexPath) as! SwitchCell
+        
+        let category = categories[(indexPath as NSIndexPath).row]
+        cell.switchLabel.text = category["name"]
+        cell.delegate = self
+        
+        return cell
+    }
+    
+    // MARK: - SwitchCellDelegate
+    
+    func switchCell(switchCell: SwitchCell, didChangeValue value: Bool) {
+        print("delegate handling change")
+        let indexPath = tableView.indexPathForView(switchCell)!
+    }
+    
+    let categories: [[String: String]] =
         [["name" : "Afghan", "code": "afghani"],
          ["name" : "African", "code": "african"],
          ["name" : "American, New", "code": "newamerican"],
