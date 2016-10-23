@@ -118,7 +118,6 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
 //        tableView.deselectRow(at: indexPath, animated: true)
         if let cell = tableView.cellForRow(at: indexPath) {
 //            cell.selectionStyle = .none
-            cell.accessoryType = .checkmark
         }
     }
     
@@ -126,7 +125,6 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         if let cell = tableView.cellForRow(at: indexPath) {
 //            cell.selectionStyle = .blue
-            cell.accessoryType = .none
         }
     }
     
