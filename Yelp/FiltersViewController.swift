@@ -30,8 +30,8 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
         tableView.delegate = self;
         
         // Auto size cells
-//        tableView.estimatedRowHeight = 150.0
-//        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.estimatedRowHeight = 100.0
+        tableView.rowHeight = UITableViewAutomaticDimension
     }
 
     override func didReceiveMemoryWarning() {

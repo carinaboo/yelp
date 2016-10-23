@@ -12,6 +12,8 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
     
     @IBOutlet weak var tableView: UITableView!
     
+    var searchBar: UISearchBar!
+    
     var businesses: [Business]!
     
     override func viewDidLoad() {
@@ -24,6 +26,14 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
         // Auto size cells
         tableView.estimatedRowHeight = 150.0
         tableView.rowHeight = UITableViewAutomaticDimension
+        
+        // Initialize the UISearchBar
+        searchBar = UISearchBar()
+        searchBar.delegate = self
+        
+        // Add SearchBar to the NavigationBar
+        searchBar.sizeToFit()
+        navigationItem.titleView = searchBar
         
         Business.searchWithTerm(term: "Thai", completion: { (businesses: [Business]?, error: Error?) -> Void in
             
@@ -98,4 +108,34 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
         filtersViewController.delegate = self
     }
     
+}
+
+// MARK: - UISearchBarDelegate
+extension BusinessesViewController: UISearchBarDelegate {
+    
+    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
+        searchBar.setShowsCancelButton(true, animated: true)
+        return true;
+    }
+    
+    func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
+        searchBar.setShowsCancelButton(false, animated: true)
+        return true;
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+        searchBar.resignFirstResponder()
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        let searchString = searchBar.text ?? ""
+        searchBar.resignFirstResponder()
+        Business.searchWithTerm(term: searchString, sort: nil, categories: nil, deals: nil) {
+            (businesses: [Business]?, error: Error?)
+            -> Void in
+            self.businesses = businesses
+            self.tableView.reloadData()
+        }
+    }
 }
