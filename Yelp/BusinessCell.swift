@@ -26,7 +26,9 @@ class BusinessCell: UITableViewCell {
             addressLabel.text = business.address
             categoriesLabel.text = business.categories
             distanceLabel.text = business.distance
-            thumbImageView.setImageWith(business.imageURL!)
+            if let imageURL = business.imageURL {
+                thumbImageView.setImageWith(imageURL)
+            }
             ratingImageView.setImageWith(business.ratingImageURL!)
         }
     }

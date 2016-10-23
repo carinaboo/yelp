@@ -13,6 +13,7 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
     @IBOutlet weak var tableView: UITableView!
     
     var searchBar: UISearchBar!
+    var searchString: String = "food"
     
     var businesses: [Business]!
     
@@ -35,7 +36,10 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
         searchBar.sizeToFit()
         navigationItem.titleView = searchBar
         
-        Business.searchWithTerm(term: "Thai", completion: { (businesses: [Business]?, error: Error?) -> Void in
+        // Populate search bar with default query
+        searchBar.text = searchString
+        
+        Business.searchWithTerm(term: searchString, completion: { (businesses: [Business]?, error: Error?) -> Void in
             
             self.businesses = businesses
             if let businesses = businesses {
@@ -90,11 +94,12 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
     func filtersViewController(filtersViewController: FiltersViewController, didUpdateFilters filters: [String:AnyObject]) {
         let deals = filters["deals"] as? Bool
         let sort = filters["sort"] as? YelpSortMode
+        let distance = filters["distance"] as? Int
         let categories = filters["category"] as? [String]
         
         // TODO: search term should be stored
         // TODO: add distance into search params
-        Business.searchWithTerm(term: "food", sort: sort, categories: categories, deals: deals) {
+        Business.searchWithTerm(term: searchString, sort: sort, categories: categories, deals: deals, distance: distance) {
             (businesses: [Business]?, error: Error?)
             -> Void in
                 self.businesses = businesses
@@ -128,14 +133,14 @@ extension BusinessesViewController: UISearchBarDelegate {
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.text = ""
+        searchBar.text = searchString
         searchBar.resignFirstResponder()
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        let searchString = searchBar.text ?? ""
+        searchString = searchBar.text ?? searchString
         searchBar.resignFirstResponder()
-        Business.searchWithTerm(term: searchString, sort: nil, categories: nil, deals: nil) {
+        Business.searchWithTerm(term: searchString, sort: nil, categories: nil, deals: nil, distance: 0) {
             (businesses: [Business]?, error: Error?)
             -> Void in
             self.businesses = businesses

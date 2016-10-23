@@ -52,6 +52,16 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
             selectedFilters["deals"] = dealsOn as! Bool as AnyObject?
         }
         
+        // Distance
+        var distanceMode: Int = 0
+        for distance in filters["distance"]! {
+            if (distance["on"] as! Bool) {
+                distanceMode = distance["code"] as! Int
+                break
+            }
+        }
+        selectedFilters["distance"] = distanceMode as AnyObject?
+        
         // Sort by
         var sortMode: YelpSortMode = YelpSortMode.bestMatched
         for sort in filters["sort"]! {
@@ -70,6 +80,7 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
                 default:
                     break
                 }
+                break
             }
         }
         selectedFilters["sort"] = sortMode as AnyObject?
@@ -180,11 +191,11 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
     
     var filters: [String:[[String: Any]]] =
         ["deals" : [["name" : "Offering a deal", "on" : false]],
-        "distance" : [["name" : "Auto", "on" : false],
-                      ["name" : "0.3 miles", "on" : false],
-                      ["name" : "1 mile", "on" : false],
-                      ["name" : "5 miles", "on" : false],
-                      ["name" : "20 miles", "on" : false]],
+        "distance" : [["name" : "Auto", "code": 0, "on" : false],
+                      ["name" : "0.3 miles", "code": 483, "on" : false],
+                      ["name" : "1 mile", "code": 1609, "on" : false],
+                      ["name" : "5 miles", "code": 8047, "on" : false],
+                      ["name" : "20 miles", "code": 32187, "on" : false]],
         "sort" : [["name" : "Best match", "code": "default", "on" : false],
                   ["name" : "Distance", "code": "distance", "on" : false],
                   ["name" : "Highest rated", "code": "high_rating","on" : false]],
