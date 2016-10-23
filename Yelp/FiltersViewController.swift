@@ -47,6 +47,33 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
         
         var selectedFilters = [String : AnyObject]()
         
+        // Deals
+        if let dealsOn = filters["deals"]![0]["on"] {
+            selectedFilters["deals"] = dealsOn as! Bool as AnyObject?
+        }
+        
+        // Sort by
+        var sortMode: YelpSortMode = YelpSortMode.bestMatched
+        for sort in filters["sort"]! {
+            if (sort["on"] as! Bool) {
+                let sortCode = sort["code"] as! String
+                switch sortCode {
+                case "default":
+                    sortMode = YelpSortMode.bestMatched
+                    break
+                case "distance":
+                    sortMode = YelpSortMode.distance
+                    break
+                case "high_rating":
+                    sortMode = YelpSortMode.highestRated
+                    break
+                default:
+                    break
+                }
+            }
+        }
+        selectedFilters["sort"] = sortMode as AnyObject?
+        
         // Categories
         var selectedCategories = [String]()
         for category in filters["category"]! {
@@ -55,7 +82,7 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
             }
         }
         if selectedCategories.count > 0 {
-            selectedFilters["categories"] = selectedCategories as AnyObject?
+            selectedFilters["category"] = selectedCategories as AnyObject?
         }
         
         delegate?.filtersViewController!(filtersViewController: self, didUpdateFilters: selectedFilters)
@@ -145,9 +172,8 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
                     didChangeValue value: Bool) {
         
         let indexPath = tableView.indexPath(for: selectCell)!
-        let sectionIndex = indexPath.section
-        let rowIndex = indexPath.row
-        print("s:\(sectionIndex) r:\(rowIndex)")
+        
+        setFilterStateAt(sectionIndex: indexPath.section, andRowIndex: indexPath.row, toState: value)
     }
     
     // MARK: - Private
@@ -159,9 +185,9 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
                       ["name" : "1 mile", "on" : false],
                       ["name" : "5 miles", "on" : false],
                       ["name" : "20 miles", "on" : false]],
-        "sort" : [["name" : "Best match", "on" : false],
-                  ["name" : "Distance", "on" : false],
-                  ["name" : "Highest rated", "on" : false]],
+        "sort" : [["name" : "Best match", "code": "default", "on" : false],
+                  ["name" : "Distance", "code": "distance", "on" : false],
+                  ["name" : "Highest rated", "code": "high_rating","on" : false]],
         "category": [["name" : "Barbeque", "code": "bbq", "on" : false],
                      ["name" : "Breakfast & Brunch", "code": "breakfast_brunch", "on" : false],
                      ["name" : "Thai", "code": "thai", "on" : false],

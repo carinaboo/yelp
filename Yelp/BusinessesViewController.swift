@@ -88,9 +88,13 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
     
     // MARK: - FiltersViewController
     func filtersViewController(filtersViewController: FiltersViewController, didUpdateFilters filters: [String:AnyObject]) {
-        let categories = filters["categories"] as? [String]
+        let deals = filters["deals"] as? Bool
+        let sort = filters["sort"] as? YelpSortMode
+        let categories = filters["category"] as? [String]
         
-        Business.searchWithTerm(term: "food", sort: nil, categories: categories, deals: nil) {
+        // TODO: search term should be stored
+        // TODO: add distance into search params
+        Business.searchWithTerm(term: "food", sort: sort, categories: categories, deals: deals) {
             (businesses: [Business]?, error: Error?)
             -> Void in
                 self.businesses = businesses
