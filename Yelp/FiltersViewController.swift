@@ -8,9 +8,19 @@
 
 import UIKit
 
+@objc protocol FiltersViewControllerDelegate: class {
+    @objc optional func filtersViewController(filtersViewController: FiltersViewController, didUpdateFilters filters: [String:AnyObject])
+
+}
+
 class FiltersViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, SwitchCellDelegate {
 
     @IBOutlet weak var tableView: UITableView!
+    
+    weak var delegate: FiltersViewControllerDelegate?
+    
+    // let categories: [[String: String]]
+    var switchStates = [Int:Bool]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,6 +45,9 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
     
     @IBAction func onSearchButton(_ sender: AnyObject) {
         dismiss(animated: true, completion: nil)
+        
+        let filter = [String : AnyObject]()
+        delegate?.filtersViewController!(filtersViewController: self, didUpdateFilters: filter)
     }
     
     // MARK: - UITableViewDataSource
@@ -50,14 +63,18 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
         cell.switchLabel.text = category["name"]
         cell.delegate = self
         
+        cell.onSwitch.isOn = switchStates[indexPath.row] ?? false
+        
         return cell
     }
     
     // MARK: - SwitchCellDelegate
     
+    // User tapped switch on Filters food category
     func switchCell(switchCell: SwitchCell, didChangeValue value: Bool) {
-        print("delegate handling change")
-        let indexPath = tableView.indexPathForView(switchCell)!
+        let indexPath = tableView.indexPath(for: switchCell)!
+        
+        switchStates[indexPath.row] = value
     }
     
     let categories: [[String: String]] =
