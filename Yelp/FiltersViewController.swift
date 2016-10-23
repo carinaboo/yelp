@@ -74,18 +74,22 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
     
     // Cell for section/row
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "SwitchCell", for: indexPath) as! SwitchCell
-        
+        let optionType = getFilterTypeBySectionIndex(index: indexPath.section)
         let options = getFilterOptionsBySectionIndex(index: indexPath.section)
         let option = options[indexPath.row]
-        
-//        let category = filters["category"]![(indexPath as NSIndexPath).row]
-        cell.switchLabel.text = option["name"]
-        cell.delegate = self
-        
-        cell.onSwitch.isOn = switchStates[indexPath.row] ?? false
-        
-        return cell
+
+        if (optionType == "switch") {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "SwitchCell", for: indexPath) as! SwitchCell
+            cell.optionLabel.text = option["name"]
+            cell.delegate = self
+            cell.onSwitch.isOn = switchStates[indexPath.row] ?? false
+            return cell
+        } else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "SelectCell", for: indexPath) as! SelectCell
+            cell.optionLabel.text = option["name"]
+//            cell.delegate = self
+            return cell
+        }
     }
     
     // Section header
@@ -109,9 +113,21 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
         return 40
     }
     
-    // Deselect row after tap
+    // On select row
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+//        tableView.deselectRow(at: indexPath, animated: true)
+        if let cell = tableView.cellForRow(at: indexPath) {
+//            cell.selectionStyle = .none
+            cell.accessoryType = .checkmark
+        }
+    }
+    
+    // On deselect row
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        if let cell = tableView.cellForRow(at: indexPath) {
+//            cell.selectionStyle = .blue
+            cell.accessoryType = .none
+        }
     }
     
     // MARK: - SwitchCellDelegate
@@ -126,7 +142,7 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
     // MARK: - Private
     
     let filters: [String:[[String: String]]] =
-        ["deals" : [["name" : "Offering a deal"]],
+        ["deals" : [["name" : "Offering a deal", "type" : "switch"]],
         "distance" : [["name" : "Auto"],
                       ["name" : "0.3 miles"],
                       ["name" : "1 mile"],
@@ -139,6 +155,21 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
                      ["name" : "Breakfast & Brunch", "code": "breakfast_brunch"],
                      ["name" : "Thai", "code": "thai"],
                      ["name" : "Vietnamese", "code": "vietnamese"]]]
+    
+    func getFilterTypeBySectionIndex(index: Int) -> String {
+        switch index {
+        case 0:
+            return "switch"
+        case 1:
+            return "select"
+        case 2:
+            return "select"
+        case 3:
+            return "switch"
+        default:
+            return "none"
+        }
+    }
     
     func getFilterNameBySectionIndex(index: Int) -> String {
         switch index {

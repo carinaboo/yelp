@@ -156,7 +156,7 @@
                                             <frame key="frameInset" width="375" height="73"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Box-qu-UKF">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Switch option label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Box-qu-UKF">
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -172,7 +172,29 @@
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="onSwitch" destination="bKD-28-naD" id="ihE-cm-m4L"/>
-                                            <outlet property="switchLabel" destination="Box-qu-UKF" id="F2v-UW-6k7"/>
+                                            <outlet property="optionLabel" destination="Box-qu-UKF" id="gea-t9-owC"/>
+                                        </connections>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="SelectCell" rowHeight="74" id="x7q-hI-3t3" customClass="SelectCell" customModule="Yelp" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="194" width="375" height="74"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="x7q-hI-3t3" id="EVZ-ua-N37">
+                                            <frame key="frameInset" width="375" height="73"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select option label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1As-gV-Yka">
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="1As-gV-Yka" firstAttribute="leading" secondItem="EVZ-ua-N37" secondAttribute="leading" constant="8" id="J8W-Ps-hEo"/>
+                                                <constraint firstItem="1As-gV-Yka" firstAttribute="centerY" secondItem="EVZ-ua-N37" secondAttribute="centerY" id="OrK-wE-33a"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="optionLabel" destination="1As-gV-Yka" id="YQS-9J-Y7o"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
