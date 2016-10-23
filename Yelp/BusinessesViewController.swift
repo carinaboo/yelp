@@ -98,7 +98,6 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
         let categories = filters["category"] as? [String]
         
         // TODO: search term should be stored
-        // TODO: add distance into search params
         Business.searchWithTerm(term: searchString, sort: sort, categories: categories, deals: deals, distance: distance) {
             (businesses: [Business]?, error: Error?)
             -> Void in
