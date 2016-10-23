@@ -78,12 +78,14 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
     
     // MARK: - FiltersViewController
     func filtersViewController(filtersViewController: FiltersViewController, didUpdateFilters filters: [String:AnyObject]) {
-        Business.searchWithTerm(term: "food") {
+        let categories = filters["categories"] as? [String]
+        
+        Business.searchWithTerm(term: "food", sort: nil, categories: categories, deals: nil) {
             (businesses: [Business]?, error: Error?)
             -> Void in
                 self.businesses = businesses
                 self.tableView.reloadData()
-            }
+        }
     }
 
     // MARK: - Navigation
