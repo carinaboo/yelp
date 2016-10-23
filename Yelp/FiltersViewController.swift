@@ -13,13 +13,13 @@ import UIKit
 
 }
 
-class FiltersViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, SwitchCellDelegate {
+class FiltersViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, SwitchCellDelegate, SelectCellDelegate {
 
     @IBOutlet weak var tableView: UITableView!
     
     weak var delegate: FiltersViewControllerDelegate?
     
-    var switchStates = [Int:Bool]()
+//    var filterStates = [Int:[Int:Bool]]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,10 +47,11 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
         
         var selectedFilters = [String : AnyObject]()
         
+        // Categories
         var selectedCategories = [String]()
-        for (row,isSelected) in switchStates {
-            if isSelected {
-                selectedCategories.append(filters["category"]![row]["code"]!)
+        for category in filters["category"]! {
+            if (category["on"] as! Bool) {
+                selectedCategories.append(category["code"] as! String)
             }
         }
         if selectedCategories.count > 0 {
@@ -80,14 +81,14 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
 
         if (optionType == "switch") {
             let cell = tableView.dequeueReusableCell(withIdentifier: "SwitchCell", for: indexPath) as! SwitchCell
-            cell.optionLabel.text = option["name"]
+            cell.optionLabel.text = option["name"] as! String?
             cell.delegate = self
-            cell.onSwitch.isOn = switchStates[indexPath.row] ?? false
+            cell.onSwitch.isOn = getFilterStateAt(sectionIndex: indexPath.section, andRowIndex: indexPath.row)
             return cell
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "SelectCell", for: indexPath) as! SelectCell
-            cell.optionLabel.text = option["name"]
-//            cell.delegate = self
+            cell.optionLabel.text = option["name"] as! String?
+            cell.delegate = self
             return cell
         }
     }
@@ -116,43 +117,55 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
     // On select row
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 //        tableView.deselectRow(at: indexPath, animated: true)
-        if let cell = tableView.cellForRow(at: indexPath) {
+//        if let cell = tableView.cellForRow(at: indexPath) {
 //            cell.selectionStyle = .none
-        }
+//        }
     }
     
     // On deselect row
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        if let cell = tableView.cellForRow(at: indexPath) {
+//        if let cell = tableView.cellForRow(at: indexPath) {
 //            cell.selectionStyle = .blue
-        }
+//        }
     }
     
     // MARK: - SwitchCellDelegate
     
-    // User tapped switch on Filters category
+    // User tapped switch
     func switchCell(switchCell: SwitchCell, didChangeValue value: Bool) {
         let indexPath = tableView.indexPath(for: switchCell)!
         
-        switchStates[indexPath.row] = value
+        setFilterStateAt(sectionIndex: indexPath.section, andRowIndex: indexPath.row, toState: value)
+    }
+    
+    // MARK: - SelectCellDelegate
+    
+    // User tapped select
+    func selectCell(selectCell: SelectCell,
+                    didChangeValue value: Bool) {
+        
+        let indexPath = tableView.indexPath(for: selectCell)!
+        let sectionIndex = indexPath.section
+        let rowIndex = indexPath.row
+        print("s:\(sectionIndex) r:\(rowIndex)")
     }
     
     // MARK: - Private
     
-    let filters: [String:[[String: String]]] =
-        ["deals" : [["name" : "Offering a deal", "type" : "switch"]],
-        "distance" : [["name" : "Auto"],
-                      ["name" : "0.3 miles"],
-                      ["name" : "1 mile"],
-                      ["name" : "5 miles"],
-                      ["name" : "20 miles"]],
-        "sort" : [["name" : "Best match"],
-                  ["name" : "Distance"],
-                  ["name" : "Highest rated"]],
-        "category": [["name" : "Barbeque", "code": "bbq"],
-                     ["name" : "Breakfast & Brunch", "code": "breakfast_brunch"],
-                     ["name" : "Thai", "code": "thai"],
-                     ["name" : "Vietnamese", "code": "vietnamese"]]]
+    var filters: [String:[[String: Any]]] =
+        ["deals" : [["name" : "Offering a deal", "on" : false]],
+        "distance" : [["name" : "Auto", "on" : false],
+                      ["name" : "0.3 miles", "on" : false],
+                      ["name" : "1 mile", "on" : false],
+                      ["name" : "5 miles", "on" : false],
+                      ["name" : "20 miles", "on" : false]],
+        "sort" : [["name" : "Best match", "on" : false],
+                  ["name" : "Distance", "on" : false],
+                  ["name" : "Highest rated", "on" : false]],
+        "category": [["name" : "Barbeque", "code": "bbq", "on" : false],
+                     ["name" : "Breakfast & Brunch", "code": "breakfast_brunch", "on" : false],
+                     ["name" : "Thai", "code": "thai", "on" : false],
+                     ["name" : "Vietnamese", "code": "vietnamese", "on" : false]]]
     
     func getFilterTypeBySectionIndex(index: Int) -> String {
         switch index {
@@ -184,7 +197,7 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
         }
     }
     
-    func getFilterOptionsBySectionIndex(index: Int) -> [[String: String]] {
+    func getFilterOptionsBySectionIndex(index: Int) -> [[String: Any]] {
         switch index {
         case 0:
             return filters["deals"]!
@@ -197,6 +210,34 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
         default:
             return [["":""]]
         }
+    }
+    
+    func getOptionBy(sectionIndex: Int, andRowIndex rowIndex: Int) -> [String:Any] {
+        var filterOptions = getFilterOptionsBySectionIndex(index: sectionIndex)
+        return filterOptions[rowIndex]
+    }
+    
+    func setFilterStateAt(sectionIndex: Int, andRowIndex rowIndex: Int, toState on: Bool) {
+        switch sectionIndex {
+        case 0:
+            filters["deals"]![rowIndex]["on"] = on
+        case 1:
+            filters["distance"]![rowIndex]["on"] = on
+        case 2:
+            filters["sort"]![rowIndex]["on"] = on
+        case 3:
+            filters["category"]![rowIndex]["on"] = on
+        default:
+            break
+        }
+//        Passes by value instead of by reference
+//        var option = getOptionBy(sectionIndex: sectionIndex, andRowIndex: rowIndex)
+//        option["on"] = on
+    }
+    
+    func getFilterStateAt(sectionIndex: Int, andRowIndex rowIndex: Int) -> Bool {
+        var option = getOptionBy(sectionIndex: sectionIndex, andRowIndex: rowIndex)
+        return option["on"] as! Bool
     }
     
 //    let categories: [[String: String]] =

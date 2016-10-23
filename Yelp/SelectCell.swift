@@ -8,16 +8,16 @@
 
 import UIKit
 
-//@objc protocol SelectCellDelegate: class {
-//    @objc optional func selectCell(selectCell: SelectCell,
-//                                   didChangeValue value: Bool)
-//}
+@objc protocol SelectCellDelegate: class {
+    @objc optional func selectCell(selectCell: SelectCell,
+                                   didChangeValue value: Bool)
+}
 
 class SelectCell: UITableViewCell {
     
     @IBOutlet weak var optionLabel: UILabel!
     
-//    weak var delegate: SelectCellDelegate?
+    weak var delegate: SelectCellDelegate?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -25,18 +25,17 @@ class SelectCell: UITableViewCell {
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
+        if (self.isSelected == selected) {
+            return
+        }
         super.setSelected(selected, animated: animated)
         
-        // Configure the view for the selected state
         if (selected) {
             self.accessoryType = .checkmark
         } else {
             self.accessoryType = .none
         }
-    }
-    
-    func selectedChanged() {
-//        delegate?.selectCell?(selectCell: self, didChangeValue: selected)
+        delegate?.selectCell?(selectCell: self, didChangeValue: selected)
     }
     
 }
