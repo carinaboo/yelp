@@ -199,6 +199,29 @@
                                             <outlet property="optionLabel" destination="1As-gV-Yka" id="YQS-9J-Y7o"/>
                                         </connections>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ButtonCell" id="Y9c-bc-AdI" customClass="ButtonCell" customModule="Yelp" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="268" width="375" height="74"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Y9c-bc-AdI" id="YFl-ei-6ub">
+                                            <frame key="frameInset" width="375" height="73"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NUS-uO-uLj">
+                                                    <state key="normal" title="See all"/>
+                                                    <connections>
+                                                        <action selector="onButton:" destination="Y9c-bc-AdI" eventType="touchUpInside" id="GKk-hE-Oxa"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="NUS-uO-uLj" firstAttribute="centerX" secondItem="YFl-ei-6ub" secondAttribute="centerX" id="ANu-YW-FVO"/>
+                                                <constraint firstItem="NUS-uO-uLj" firstAttribute="centerY" secondItem="YFl-ei-6ub" secondAttribute="centerY" id="Sak-ng-x5d"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="button" destination="NUS-uO-uLj" id="SfX-HH-fJQ"/>
+                                        </connections>
+                                    </tableViewCell>
                                 </prototypes>
                             </tableView>
                         </subviews>
@@ -222,7 +245,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Pop-Pc-tuC" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4354" y="358"/>
+            <point key="canvasLocation" x="4352.8000000000002" y="357.57121439280365"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Lmk-OF-08s">

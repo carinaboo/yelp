@@ -13,7 +13,7 @@ import UIKit
 
 }
 
-class FiltersViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, SwitchCellDelegate, SelectCellDelegate {
+class FiltersViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, SwitchCellDelegate, SelectCellDelegate, ButtonCellDelegate {
 
     @IBOutlet weak var tableView: UITableView!
     
@@ -116,15 +116,23 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
     
     // Cell for section/row
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let optionType = getFilterTypeBySectionIndex(index: indexPath.section)
+        var optionType = getFilterTypeBySectionIndex(index: indexPath.section)
         let options = getFilterOptionsBySectionIndex(index: indexPath.section)
         let option = options[indexPath.row]
 
+        if let type = option["type"] {
+            optionType = type as! String
+        }
         if (optionType == "switch") {
             let cell = tableView.dequeueReusableCell(withIdentifier: "SwitchCell", for: indexPath) as! SwitchCell
             cell.optionLabel.text = option["name"] as! String?
             cell.delegate = self
             cell.onSwitch.isOn = getFilterStateAt(sectionIndex: indexPath.section, andRowIndex: indexPath.row)
+            return cell
+        } else if (optionType == "button") {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ButtonCell", for: indexPath) as! ButtonCell
+            cell.button.titleLabel?.text = option["name"] as! String?
+//            cell.delegate = self
             return cell
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "SelectCell", for: indexPath) as! SelectCell
@@ -205,7 +213,8 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
         "category": [["name" : "Barbeque", "code": "bbq", "on" : false],
                      ["name" : "Breakfast & Brunch", "code": "breakfast_brunch", "on" : false],
                      ["name" : "Thai", "code": "thai", "on" : false],
-                     ["name" : "Vietnamese", "code": "vietnamese", "on" : false]]]
+                     ["name" : "Vietnamese", "code": "vietnamese", "on" : false],
+                     ["name" : "See all categories", "on" : false, "type" : "button"]]]
     
     func getFilterTypeBySectionIndex(index: Int) -> String {
         switch index {

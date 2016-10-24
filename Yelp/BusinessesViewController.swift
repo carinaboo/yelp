@@ -121,7 +121,7 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
         loadingMoreView?.frame = frame
         loadingMoreView!.startAnimating()
         
-        Business.searchWithTerm(term: searchString) {
+        Business.searchWithTerm(term: searchString, offset: businesses.count) {
             (businesses: [Business]?, error: Error?)
             -> Void in
             

@@ -12,7 +12,7 @@ import AFNetworking
 import BDBOAuth1Manager
 
 // Use fake data? Turn on if testing without network
-let useFakeData = true
+let useFakeData = false
 
 // You can register for Yelp API keys here: http://www.yelp.com/developers/manage_api_keys
 let yelpConsumerKey = "vxKwwcR_NMQ7WaEiQBK_CA"
@@ -55,6 +55,10 @@ class YelpClient: BDBOAuth1RequestOperationManager {
     }
     
     func searchWithTerm(_ term: String, sort: YelpSortMode?, categories: [String]?, deals: Bool?, distance: Int?, completion: @escaping ([Business]?, Error?) -> Void) -> AFHTTPRequestOperation {
+        return searchWithTerm(term, sort: nil, categories: nil, deals: nil, distance: nil, offset: nil, completion: completion)
+    }
+    
+    func searchWithTerm(_ term: String, sort: YelpSortMode?, categories: [String]?, deals: Bool?, distance: Int?, offset: Int?, completion: @escaping ([Business]?, Error?) -> Void) -> AFHTTPRequestOperation {
         // For additional parameters, see http://www.yelp.com/developers/documentation/v2/search_api
         
         // Default the location to San Francisco
@@ -75,6 +79,12 @@ class YelpClient: BDBOAuth1RequestOperationManager {
         if distance != nil {
             if distance != 0 {
                 parameters["radius_filter"] = distance! as AnyObject?
+            }
+        }
+        
+        if offset != nil {
+            if offset != 0 {
+                parameters["offset"] = offset! as AnyObject?
             }
         }
         
