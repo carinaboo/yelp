@@ -13,7 +13,6 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
     @IBOutlet weak var tableView: UITableView!
     
     var searchBar: UISearchBar!
-    var searchString: String = "food"
     
     var isMoreDataLoading = false
     var loadingMoreView:InfiniteScrollActivityView?
@@ -148,7 +147,6 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
         let distance = filters["distance"] as? Int
         let categories = filters["category"] as? [String]
         
-        // TODO: search term should be stored
         Business.searchWithTerm(term: searchString, sort: sort, categories: categories, deals: deals, distance: distance) {
             (businesses: [Business]?, error: Error?)
             -> Void in

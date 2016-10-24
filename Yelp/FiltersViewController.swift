@@ -19,7 +19,7 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
     
     weak var delegate: FiltersViewControllerDelegate?
     
-//    var filterStates = [Int:[Int:Bool]]()
+    var categoriesExpanded: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,14 +51,15 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
         var selectedFilters = [String : AnyObject]()
         
         // Deals
-        if let dealsOn = filters["deals"]![0]["on"] {
-            selectedFilters["deals"] = dealsOn as! Bool as AnyObject?
+        let dealsOn = getFilterState(filterOption: filters["deals"]![0])
+        if dealsOn {
+            selectedFilters["deals"] = dealsOn as AnyObject?
         }
         
         // Distance
         var distanceMode: Int = 0
         for distance in filters["distance"]! {
-            if (distance["on"] as! Bool) {
+            if (getFilterState(filterOption: distance)) {
                 distanceMode = distance["code"] as! Int
                 break
             }
@@ -68,7 +69,7 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
         // Sort by
         var sortMode: YelpSortMode = YelpSortMode.bestMatched
         for sort in filters["sort"]! {
-            if (sort["on"] as! Bool) {
+            if (getFilterState(filterOption: sort)) {
                 let sortCode = sort["code"] as! String
                 switch sortCode {
                 case "default":
@@ -91,7 +92,7 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
         // Categories
         var selectedCategories = [String]()
         for category in filters["category"]! {
-            if (category["on"] as! Bool) {
+            if (getFilterState(filterOption: category)) {
                 selectedCategories.append(category["code"] as! String)
             }
         }
@@ -131,8 +132,12 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
             return cell
         } else if (optionType == "button") {
             let cell = tableView.dequeueReusableCell(withIdentifier: "ButtonCell", for: indexPath) as! ButtonCell
-            cell.button.titleLabel?.text = option["name"] as! String?
-//            cell.delegate = self
+            if (!cell.expanded) {
+                cell.button.setTitle(option["name"] as! String?, for: UIControlState.normal)
+            } else {
+                cell.button.setTitle(option["nameOn"] as! String?, for: UIControlState.normal)
+            }
+            cell.delegate = self
             return cell
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "SelectCell", for: indexPath) as! SelectCell
@@ -182,9 +187,10 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
     
     // User tapped switch
     func switchCell(switchCell: SwitchCell, didChangeValue value: Bool) {
-        let indexPath = tableView.indexPath(for: switchCell)!
         
-        setFilterStateAt(sectionIndex: indexPath.section, andRowIndex: indexPath.row, toState: value)
+        if let indexPath = tableView.indexPath(for: switchCell) {
+            setFilterStateAt(sectionIndex: indexPath.section, andRowIndex: indexPath.row, toState: value)
+        }
     }
     
     // MARK: - SelectCellDelegate
@@ -193,28 +199,57 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
     func selectCell(selectCell: SelectCell,
                     didChangeValue value: Bool) {
         
-        let indexPath = tableView.indexPath(for: selectCell)!
+        if let indexPath = tableView.indexPath(for: selectCell) {
+            setFilterStateAt(sectionIndex: indexPath.section, andRowIndex: indexPath.row, toState: value)
+        }
+    }
+    
+    // MARK: - ButtonCellDelegate
+    
+    // User tapped see more categories button
+    func buttonCell(buttonCell: ButtonCell,
+                    didChangeValue value: Bool) {
         
-        setFilterStateAt(sectionIndex: indexPath.section, andRowIndex: indexPath.row, toState: value)
+        if let indexPath = tableView.indexPath(for: buttonCell) {
+            buttonCell.expanded = !buttonCell.expanded;
+            self.categoriesExpanded = !self.categoriesExpanded
+
+            if (self.categoriesExpanded) {
+                showAdditionalCategoriesAfter(indexPath: indexPath)
+            } else {
+                hideAdditionalCategoriesAfter(indexPath: indexPath)
+            }
+            
+//            let categoryCount = filters["category"]!.count
+//            let insertIndexPath = IndexPath(row: categoryCount-1, section: indexPath.section)
+//            print(indexPath)
+//            print(insertIndexPath)
+        }
+    }
+    
+    func showAdditionalCategoriesAfter(indexPath: IndexPath) {
+        filters["category"]?.append(contentsOf: categories)
+        
+        tableView.reloadData()
+        
+//        This method doesn't work. Adds another ButtonCell instead of reading from filters data.
+//        tableView.beginUpdates()
+//        tableView.insertRows(at: [indexPath], with: .automatic)
+//        tableView.endUpdates()
+
+    }
+    
+    func hideAdditionalCategoriesAfter(indexPath: IndexPath) {
+        let categoriesExpanded = filters["category"]!
+        
+        let startCategoriesExpandedIndex = categoriesExpanded.count - categories.count
+        let categoriesCollapsed = Array(categoriesExpanded[0..<startCategoriesExpandedIndex])
+        
+        filters["category"] = categoriesCollapsed
+        tableView.reloadData()
     }
     
     // MARK: - Private
-    
-    var filters: [String:[[String: Any]]] =
-        ["deals" : [["name" : "Offering a deal", "on" : false]],
-        "distance" : [["name" : "Auto", "code": 0, "on" : false],
-                      ["name" : "0.3 miles", "code": 483, "on" : false],
-                      ["name" : "1 mile", "code": 1609, "on" : false],
-                      ["name" : "5 miles", "code": 8047, "on" : false],
-                      ["name" : "20 miles", "code": 32187, "on" : false]],
-        "sort" : [["name" : "Best match", "code": "default", "on" : false],
-                  ["name" : "Distance", "code": "distance", "on" : false],
-                  ["name" : "Highest rated", "code": "high_rating","on" : false]],
-        "category": [["name" : "Barbeque", "code": "bbq", "on" : false],
-                     ["name" : "Breakfast & Brunch", "code": "breakfast_brunch", "on" : false],
-                     ["name" : "Thai", "code": "thai", "on" : false],
-                     ["name" : "Vietnamese", "code": "vietnamese", "on" : false],
-                     ["name" : "See all categories", "on" : false, "type" : "button"]]]
     
     func getFilterTypeBySectionIndex(index: Int) -> String {
         switch index {
@@ -284,180 +319,17 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
 //        option["on"] = on
     }
     
-    func getFilterStateAt(sectionIndex: Int, andRowIndex rowIndex: Int) -> Bool {
-        var option = getOptionBy(sectionIndex: sectionIndex, andRowIndex: rowIndex)
-        return option["on"] as! Bool
+    func getFilterState(filterOption: [String: Any]) -> Bool {
+        if let optionIsOn = filterOption["on"] {
+            return optionIsOn as! Bool
+        } else {
+            return false
+        }
     }
     
-//    let categories: [[String: String]] =
-//        [["name" : "Afghan", "code": "afghani"],
-//         ["name" : "African", "code": "african"],
-//         ["name" : "American, New", "code": "newamerican"],
-//         ["name" : "American, Traditional", "code": "tradamerican"],
-//         ["name" : "Arabian", "code": "arabian"],
-//         ["name" : "Argentine", "code": "argentine"],
-//         ["name" : "Armenian", "code": "armenian"],
-//         ["name" : "Asian Fusion", "code": "asianfusion"],
-//         ["name" : "Asturian", "code": "asturian"],
-//         ["name" : "Australian", "code": "australian"],
-//         ["name" : "Austrian", "code": "austrian"],
-//         ["name" : "Baguettes", "code": "baguettes"],
-//         ["name" : "Bangladeshi", "code": "bangladeshi"],
-//         ["name" : "Barbeque", "code": "bbq"],
-//         ["name" : "Basque", "code": "basque"],
-//         ["name" : "Bavarian", "code": "bavarian"],
-//         ["name" : "Beer Garden", "code": "beergarden"],
-//         ["name" : "Beer Hall", "code": "beerhall"],
-//         ["name" : "Beisl", "code": "beisl"],
-//         ["name" : "Belgian", "code": "belgian"],
-//         ["name" : "Bistros", "code": "bistros"],
-//         ["name" : "Black Sea", "code": "blacksea"],
-//         ["name" : "Brasseries", "code": "brasseries"],
-//         ["name" : "Brazilian", "code": "brazilian"],
-//         ["name" : "Breakfast & Brunch", "code": "breakfast_brunch"],
-//         ["name" : "British", "code": "british"],
-//         ["name" : "Buffets", "code": "buffets"],
-//         ["name" : "Bulgarian", "code": "bulgarian"],
-//         ["name" : "Burgers", "code": "burgers"],
-//         ["name" : "Burmese", "code": "burmese"],
-//         ["name" : "Cafes", "code": "cafes"],
-//         ["name" : "Cafeteria", "code": "cafeteria"],
-//         ["name" : "Cajun/Creole", "code": "cajun"],
-//         ["name" : "Cambodian", "code": "cambodian"],
-//         ["name" : "Canadian", "code": "New)"],
-//         ["name" : "Canteen", "code": "canteen"],
-//         ["name" : "Caribbean", "code": "caribbean"],
-//         ["name" : "Catalan", "code": "catalan"],
-//         ["name" : "Chech", "code": "chech"],
-//         ["name" : "Cheesesteaks", "code": "cheesesteaks"],
-//         ["name" : "Chicken Shop", "code": "chickenshop"],
-//         ["name" : "Chicken Wings", "code": "chicken_wings"],
-//         ["name" : "Chilean", "code": "chilean"],
-//         ["name" : "Chinese", "code": "chinese"],
-//         ["name" : "Comfort Food", "code": "comfortfood"],
-//         ["name" : "Corsican", "code": "corsican"],
-//         ["name" : "Creperies", "code": "creperies"],
-//         ["name" : "Cuban", "code": "cuban"],
-//         ["name" : "Curry Sausage", "code": "currysausage"],
-//         ["name" : "Cypriot", "code": "cypriot"],
-//         ["name" : "Czech", "code": "czech"],
-//         ["name" : "Czech/Slovakian", "code": "czechslovakian"],
-//         ["name" : "Danish", "code": "danish"],
-//         ["name" : "Delis", "code": "delis"],
-//         ["name" : "Diners", "code": "diners"],
-//         ["name" : "Dumplings", "code": "dumplings"],
-//         ["name" : "Eastern European", "code": "eastern_european"],
-//         ["name" : "Ethiopian", "code": "ethiopian"],
-//         ["name" : "Fast Food", "code": "hotdogs"],
-//         ["name" : "Filipino", "code": "filipino"],
-//         ["name" : "Fish & Chips", "code": "fishnchips"],
-//         ["name" : "Fondue", "code": "fondue"],
-//         ["name" : "Food Court", "code": "food_court"],
-//         ["name" : "Food Stands", "code": "foodstands"],
-//         ["name" : "French", "code": "french"],
-//         ["name" : "French Southwest", "code": "sud_ouest"],
-//         ["name" : "Galician", "code": "galician"],
-//         ["name" : "Gastropubs", "code": "gastropubs"],
-//         ["name" : "Georgian", "code": "georgian"],
-//         ["name" : "German", "code": "german"],
-//         ["name" : "Giblets", "code": "giblets"],
-//         ["name" : "Gluten-Free", "code": "gluten_free"],
-//         ["name" : "Greek", "code": "greek"],
-//         ["name" : "Halal", "code": "halal"],
-//         ["name" : "Hawaiian", "code": "hawaiian"],
-//         ["name" : "Heuriger", "code": "heuriger"],
-//         ["name" : "Himalayan/Nepalese", "code": "himalayan"],
-//         ["name" : "Hong Kong Style Cafe", "code": "hkcafe"],
-//         ["name" : "Hot Dogs", "code": "hotdog"],
-//         ["name" : "Hot Pot", "code": "hotpot"],
-//         ["name" : "Hungarian", "code": "hungarian"],
-//         ["name" : "Iberian", "code": "iberian"],
-//         ["name" : "Indian", "code": "indpak"],
-//         ["name" : "Indonesian", "code": "indonesian"],
-//         ["name" : "International", "code": "international"],
-//         ["name" : "Irish", "code": "irish"],
-//         ["name" : "Island Pub", "code": "island_pub"],
-//         ["name" : "Israeli", "code": "israeli"],
-//         ["name" : "Italian", "code": "italian"],
-//         ["name" : "Japanese", "code": "japanese"],
-//         ["name" : "Jewish", "code": "jewish"],
-//         ["name" : "Kebab", "code": "kebab"],
-//         ["name" : "Korean", "code": "korean"],
-//         ["name" : "Kosher", "code": "kosher"],
-//         ["name" : "Kurdish", "code": "kurdish"],
-//         ["name" : "Laos", "code": "laos"],
-//         ["name" : "Laotian", "code": "laotian"],
-//         ["name" : "Latin American", "code": "latin"],
-//         ["name" : "Live/Raw Food", "code": "raw_food"],
-//         ["name" : "Lyonnais", "code": "lyonnais"],
-//         ["name" : "Malaysian", "code": "malaysian"],
-//         ["name" : "Meatballs", "code": "meatballs"],
-//         ["name" : "Mediterranean", "code": "mediterranean"],
-//         ["name" : "Mexican", "code": "mexican"],
-//         ["name" : "Middle Eastern", "code": "mideastern"],
-//         ["name" : "Milk Bars", "code": "milkbars"],
-//         ["name" : "Modern Australian", "code": "modern_australian"],
-//         ["name" : "Modern European", "code": "modern_european"],
-//         ["name" : "Mongolian", "code": "mongolian"],
-//         ["name" : "Moroccan", "code": "moroccan"],
-//         ["name" : "New Zealand", "code": "newzealand"],
-//         ["name" : "Night Food", "code": "nightfood"],
-//         ["name" : "Norcinerie", "code": "norcinerie"],
-//         ["name" : "Open Sandwiches", "code": "opensandwiches"],
-//         ["name" : "Oriental", "code": "oriental"],
-//         ["name" : "Pakistani", "code": "pakistani"],
-//         ["name" : "Parent Cafes", "code": "eltern_cafes"],
-//         ["name" : "Parma", "code": "parma"],
-//         ["name" : "Persian/Iranian", "code": "persian"],
-//         ["name" : "Peruvian", "code": "peruvian"],
-//         ["name" : "Pita", "code": "pita"],
-//         ["name" : "Pizza", "code": "pizza"],
-//         ["name" : "Polish", "code": "polish"],
-//         ["name" : "Portuguese", "code": "portuguese"],
-//         ["name" : "Potatoes", "code": "potatoes"],
-//         ["name" : "Poutineries", "code": "poutineries"],
-//         ["name" : "Pub Food", "code": "pubfood"],
-//         ["name" : "Rice", "code": "riceshop"],
-//         ["name" : "Romanian", "code": "romanian"],
-//         ["name" : "Rotisserie Chicken", "code": "rotisserie_chicken"],
-//         ["name" : "Rumanian", "code": "rumanian"],
-//         ["name" : "Russian", "code": "russian"],
-//         ["name" : "Salad", "code": "salad"],
-//         ["name" : "Sandwiches", "code": "sandwiches"],
-//         ["name" : "Scandinavian", "code": "scandinavian"],
-//         ["name" : "Scottish", "code": "scottish"],
-//         ["name" : "Seafood", "code": "seafood"],
-//         ["name" : "Serbo Croatian", "code": "serbocroatian"],
-//         ["name" : "Signature Cuisine", "code": "signature_cuisine"],
-//         ["name" : "Singaporean", "code": "singaporean"],
-//         ["name" : "Slovakian", "code": "slovakian"],
-//         ["name" : "Soul Food", "code": "soulfood"],
-//         ["name" : "Soup", "code": "soup"],
-//         ["name" : "Southern", "code": "southern"],
-//         ["name" : "Spanish", "code": "spanish"],
-//         ["name" : "Steakhouses", "code": "steak"],
-//         ["name" : "Sushi Bars", "code": "sushi"],
-//         ["name" : "Swabian", "code": "swabian"],
-//         ["name" : "Swedish", "code": "swedish"],
-//         ["name" : "Swiss Food", "code": "swissfood"],
-//         ["name" : "Tabernas", "code": "tabernas"],
-//         ["name" : "Taiwanese", "code": "taiwanese"],
-//         ["name" : "Tapas Bars", "code": "tapas"],
-//         ["name" : "Tapas/Small Plates", "code": "tapasmallplates"],
-//         ["name" : "Tex-Mex", "code": "tex-mex"],
-//         ["name" : "Thai", "code": "thai"],
-//         ["name" : "Traditional Norwegian", "code": "norwegian"],
-//         ["name" : "Traditional Swedish", "code": "traditional_swedish"],
-//         ["name" : "Trattorie", "code": "trattorie"],
-//         ["name" : "Turkish", "code": "turkish"],
-//         ["name" : "Ukrainian", "code": "ukrainian"],
-//         ["name" : "Uzbek", "code": "uzbek"],
-//         ["name" : "Vegan", "code": "vegan"],
-//         ["name" : "Vegetarian", "code": "vegetarian"],
-//         ["name" : "Venison", "code": "venison"],
-//         ["name" : "Vietnamese", "code": "vietnamese"],
-//         ["name" : "Wok", "code": "wok"],
-//         ["name" : "Wraps", "code": "wraps"],
-//         ["name" : "Yugoslav", "code": "yugoslav"]]
+    func getFilterStateAt(sectionIndex: Int, andRowIndex rowIndex: Int) -> Bool {
+        let option = getOptionBy(sectionIndex: sectionIndex, andRowIndex: rowIndex)
+        return getFilterState(filterOption: option)
+    }
 
 }
