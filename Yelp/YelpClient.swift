@@ -11,6 +11,9 @@ import UIKit
 import AFNetworking
 import BDBOAuth1Manager
 
+// Use fake data? Turn on if testing without network
+let useFakeData = true
+
 // You can register for Yelp API keys here: http://www.yelp.com/developers/manage_api_keys
 let yelpConsumerKey = "vxKwwcR_NMQ7WaEiQBK_CA"
 let yelpConsumerSecret = "33QCvh5bIF5jIHR5klQr7RtBDhQ"
@@ -77,21 +80,22 @@ class YelpClient: BDBOAuth1RequestOperationManager {
         
         print(parameters)
         
-        // Fake data
-        completion(Business.fakeBusinesses(), nil)
-        return AFHTTPRequestOperation()
-        
-//        return self.get("search", parameters: parameters,
-//                        success: { (operation: AFHTTPRequestOperation, response: Any) -> Void in
-//                            if let response = response as? [String: Any]{
-//                                let dictionaries = response["businesses"] as? [NSDictionary]
-//                                if dictionaries != nil {
-//                                    completion(Business.businesses(array: dictionaries!), nil)
-//                                }
-//                            }
-//                        },
-//                        failure: { (operation: AFHTTPRequestOperation?, error: Error) -> Void in
-//                            completion(nil, error)
-//                        })!
+        // Use fake data
+        if (useFakeData) {
+            completion(Business.fakeBusinesses(), nil)
+            return AFHTTPRequestOperation()
+        }
+        return self.get("search", parameters: parameters,
+                        success: { (operation: AFHTTPRequestOperation, response: Any) -> Void in
+                            if let response = response as? [String: Any]{
+                                let dictionaries = response["businesses"] as? [NSDictionary]
+                                if dictionaries != nil {
+                                    completion(Business.businesses(array: dictionaries!), nil)
+                                }
+                            }
+                        },
+                        failure: { (operation: AFHTTPRequestOperation?, error: Error) -> Void in
+                            completion(nil, error)
+                        })!
     }
 }
