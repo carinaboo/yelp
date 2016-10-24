@@ -16,6 +16,7 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
     var searchString: String = "food"
     
     var isMoreDataLoading = false
+    var loadingMoreView:InfiniteScrollActivityView?
     
     var businesses: [Business]!
     
@@ -43,6 +44,16 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
         
         // Navigation bar styling
         self.navigationController?.navigationBar.tintColor = UIColor.white
+        
+        // Set up Infinite Scroll loading indicator
+        let frame = CGRect(x: 0, y: tableView.contentSize.height, width: tableView.bounds.size.width, height: InfiniteScrollActivityView.defaultHeight)
+        loadingMoreView = InfiniteScrollActivityView(frame: frame)
+        loadingMoreView!.isHidden = true
+        tableView.addSubview(loadingMoreView!)
+        
+        var insets = tableView.contentInset;
+        insets.bottom += InfiniteScrollActivityView.defaultHeight;
+        tableView.contentInset = insets
         
         Business.searchWithTerm(term: searchString, completion: {
             (businesses: [Business]?, error: Error?)
@@ -104,7 +115,11 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
     func loadMoreData() {
         
         isMoreDataLoading = true
-        // TODO: Show loading indicator
+        
+        // Update position of loadingMoreView, and start loading indicator
+        let frame = CGRect(x: 0, y: tableView.contentSize.height, width: tableView.bounds.size.width, height: InfiniteScrollActivityView.defaultHeight)
+        loadingMoreView?.frame = frame
+        loadingMoreView!.startAnimating()
         
         Business.searchWithTerm(term: searchString) {
             (businesses: [Business]?, error: Error?)
@@ -113,7 +128,8 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
             // Update flag
             self.isMoreDataLoading = false
             
-            // TODO: Hide loading indicator
+            // Stop the loading indicator
+            self.loadingMoreView!.stopAnimating()
             
             if let businesses = businesses {
                 for business in businesses {
