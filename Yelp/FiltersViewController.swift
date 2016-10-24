@@ -19,8 +19,6 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
     
     weak var delegate: FiltersViewControllerDelegate?
     
-    var categoriesExpanded: Bool = false
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -132,7 +130,7 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
             return cell
         } else if (optionType == "button") {
             let cell = tableView.dequeueReusableCell(withIdentifier: "ButtonCell", for: indexPath) as! ButtonCell
-            if (!cell.expanded) {
+            if (!categoriesExpanded) {
                 cell.button.setTitle(option["name"] as! String?, for: UIControlState.normal)
             } else {
                 cell.button.setTitle(option["nameOn"] as! String?, for: UIControlState.normal)
@@ -211,10 +209,9 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
                     didChangeValue value: Bool) {
         
         if let indexPath = tableView.indexPath(for: buttonCell) {
-            buttonCell.expanded = !buttonCell.expanded;
-            self.categoriesExpanded = !self.categoriesExpanded
+            categoriesExpanded = !categoriesExpanded
 
-            if (self.categoriesExpanded) {
+            if (categoriesExpanded) {
                 showAdditionalCategoriesAfter(indexPath: indexPath)
             } else {
                 hideAdditionalCategoriesAfter(indexPath: indexPath)

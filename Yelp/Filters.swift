@@ -25,6 +25,8 @@ var filters: [String:[[String: Any]]] =
                   ["name" : "American, New", "code": "newamerican"],
                   ["name" : "See more categories", "nameOn": "Hide categories", "type" : "button"]]]
 
+var categoriesExpanded: Bool = false
+
 let categories: [[String: Any]] =
     [["name" : "American, Traditional", "code": "tradamerican"],
      ["name" : "Arabian", "code": "arabian"],
