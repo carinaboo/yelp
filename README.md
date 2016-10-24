@@ -35,6 +35,7 @@ The following **additional** features are implemented:
 - [x] List anything else that you can get done to improve the app functionality!
    - [x] Customize styling/UI to navigation bar to make it pretty.
    - [x] Create a fake of YelpClient and Business data for testing app without network.
+   - [x] Categories are also collapsible.
 
 Please list two areas of the assignment you'd like to **discuss further with your peers** during the next class (examples include better ways to implement something, how to extend your app in certain ways, etc):
 
@@ -45,7 +46,13 @@ Please list two areas of the assignment you'd like to **discuss further with you
 
 Here's a walkthrough of implemented user stories:
 
-<img src='https://raw.githubusercontent.com/carinaboo/yelp/master/Demo/YelpV0.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='https://raw.githubusercontent.com/carinaboo/yelp/master/Demo/YelpV1.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+
+Infinite Scroll
+<img src='https://raw.githubusercontent.com/carinaboo/yelp/master/Demo/Yelp-Scroll.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+
+Expandable/Collapsible Categories
+<img src='https://raw.githubusercontent.com/carinaboo/yelp/master/Demo/Yelp-ExpandCategories.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
