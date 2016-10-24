@@ -161,7 +161,9 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bKD-28-naD"/>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bKD-28-naD">
+                                                    <color key="onTintColor" red="0.84437099360000001" green="0.0" blue="0.0079047948290000003" alpha="1" colorSpace="calibratedRGB"/>
+                                                </switch>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="Box-qu-UKF" firstAttribute="leading" secondItem="uyY-4M-zZF" secondAttribute="leading" constant="8" id="5L2-DH-RBZ"/>
@@ -250,9 +252,10 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="uR6-9h-UBB" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="9xj-4f-kOa">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="9xj-4f-kOa">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="barTintColor" red="0.84437099360000001" green="0.0" blue="0.0079047948290000003" alpha="1" colorSpace="calibratedRGB"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>

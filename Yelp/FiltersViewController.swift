@@ -31,6 +31,9 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
         // Auto size cells
         tableView.estimatedRowHeight = 100.0
         tableView.rowHeight = UITableViewAutomaticDimension
+        
+        // Navigation bar styling
+        self.navigationController?.navigationBar.tintColor = UIColor.white
     }
 
     override func didReceiveMemoryWarning() {

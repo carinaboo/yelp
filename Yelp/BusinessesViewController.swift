@@ -8,12 +8,14 @@
 
 import UIKit
 
-class BusinessesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, FiltersViewControllerDelegate {
+class BusinessesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, FiltersViewControllerDelegate {
     
     @IBOutlet weak var tableView: UITableView!
     
     var searchBar: UISearchBar!
     var searchString: String = "food"
+    
+    var isMoreDataLoading = false
     
     var businesses: [Business]!
     
@@ -39,30 +41,24 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
         // Populate search bar with default query
         searchBar.text = searchString
         
-        Business.searchWithTerm(term: searchString, completion: { (businesses: [Business]?, error: Error?) -> Void in
+        // Navigation bar styling
+        self.navigationController?.navigationBar.tintColor = UIColor.white
+        
+        Business.searchWithTerm(term: searchString, completion: {
+            (businesses: [Business]?, error: Error?)
+            -> Void in
             
-            self.businesses = businesses
-            if let businesses = businesses {
-                self.tableView.reloadData()
-                for business in businesses {
-                    print(business.name!)
-                    print(business.address!)
+                self.businesses = businesses
+                if let businesses = businesses {
+                    self.tableView.reloadData()
+                    for business in businesses {
+                        print(business.name!)
+                        print(business.address!)
+                    }
                 }
-            }
             
             }
         )
-        
-        /* Example of Yelp search with more search options specified
-         Business.searchWithTerm("Restaurants", sort: .Distance, categories: ["asianfusion", "burgers"], deals: true) { (businesses: [Business]!, error: NSError!) -> Void in
-         self.businesses = businesses
-         
-         for business in businesses {
-         print(business.name!)
-         print(business.address!)
-         }
-         }
-         */
         
     }
     
@@ -88,6 +84,43 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
         cell.business = business
         
         return cell
+    }
+    
+    // MARK: - UIScrollViewDelegate
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if (!isMoreDataLoading) {
+            // Calculate the position of one screen length before the bottom of the results
+            let scrollViewContentHeight = tableView.contentSize.height
+            let scrollOffsetThreshold = scrollViewContentHeight - tableView.bounds.size.height
+            
+            // When the user has scrolled past the threshold, start requesting
+            if(scrollView.contentOffset.y > scrollOffsetThreshold && tableView.isDragging) {
+                loadMoreData()
+            }
+        }
+    }
+    
+    func loadMoreData() {
+        
+        isMoreDataLoading = true
+        // TODO: Show loading indicator
+        
+        Business.searchWithTerm(term: searchString) {
+            (businesses: [Business]?, error: Error?)
+            -> Void in
+            
+            // Update flag
+            self.isMoreDataLoading = false
+            
+            // TODO: Hide loading indicator
+            
+            if let businesses = businesses {
+                self.businesses.append(contentsOf: businesses)
+                
+                self.tableView.reloadData()
+            }
+        }
     }
     
     // MARK: - FiltersViewController
