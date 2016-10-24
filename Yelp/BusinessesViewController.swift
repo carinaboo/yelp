@@ -116,7 +116,9 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
             // TODO: Hide loading indicator
             
             if let businesses = businesses {
-                self.businesses.append(contentsOf: businesses)
+                for business in businesses {
+                    self.businesses.append(business)
+                }
                 
                 self.tableView.reloadData()
             }

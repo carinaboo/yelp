@@ -22,14 +22,16 @@ class BusinessCell: UITableViewCell {
     var business: Business! {
         didSet {
             nameLabel.text = business.name
-            reviewCountLabel.text = "\(business.reviewCount!) Reviews"
+            reviewCountLabel.text = "\(business.reviewCount ?? 0) Reviews"
             addressLabel.text = business.address
             categoriesLabel.text = business.categories
             distanceLabel.text = business.distance
             if let imageURL = business.imageURL {
                 thumbImageView.setImageWith(imageURL)
             }
-            ratingImageView.setImageWith(business.ratingImageURL!)
+            if let ratingImageURL = business.ratingImageURL {
+                ratingImageView.setImageWith(ratingImageURL)
+            }
         }
     }
     

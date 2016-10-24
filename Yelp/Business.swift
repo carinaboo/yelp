@@ -83,7 +83,7 @@ class Business: NSObject {
         }
         return businesses
     }
-    
+
     class func searchWithTerm(term: String, completion: @escaping ([Business]?, Error?) -> Void) {
         _ = YelpClient.sharedInstance.searchWithTerm(term, completion: completion)
     }
@@ -95,4 +95,26 @@ class Business: NSObject {
     class func searchWithTerm(term: String, sort: YelpSortMode?, categories: [String]?, deals: Bool?, distance: Int?, completion: @escaping ([Business]?, Error?) -> Void) -> Void {
         _ = YelpClient.sharedInstance.searchWithTerm(term, sort: sort, categories: categories, deals: deals, distance: distance, completion: completion)
     }
+    
+    // MARK: - Fakes for testing
+    
+    // Return array of fake businesses
+    class func fakeBusinesses() -> [Business] {
+        let businesses: [NSDictionary] =
+            [["name" : "Oodles of Thai Noodles",
+              "categories" : [["Thai"], ["Asian Fusion"]]],
+             ["name" : "Dave's BBQ",
+              "categories" : [["Barbeque"], ["Burgers"]]],
+             ["name" : "McDonalds",
+              "categories" : [["Fast Food"], ["Burgers"]]],
+             ["name" : "Rolly-polly Sushi",
+              "categories" : [["Japanese"], ["Sushi"]]],
+             ["name" : "Ensalata",
+              "categories" : [["Salad"]]],
+             ["name" : "KFC",
+              "categories" : [["Fast Food"]]]
+        ]
+        return Business.businesses(array: businesses)
+    }
+    
 }
