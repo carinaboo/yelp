@@ -46,12 +46,13 @@ Please list two areas of the assignment you'd like to **discuss further with you
 
 Here's a walkthrough of implemented user stories:
 
+### Overview
 <img src='https://raw.githubusercontent.com/carinaboo/yelp/master/Demo/YelpV1.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
-Infinite Scroll
+### Infinite Scroll
 <img src='https://raw.githubusercontent.com/carinaboo/yelp/master/Demo/Yelp-Scroll.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
-Expandable/Collapsible Categories
+### Expandable/Collapsible Categories
 <img src='https://raw.githubusercontent.com/carinaboo/yelp/master/Demo/Yelp-ExpandCategories.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
